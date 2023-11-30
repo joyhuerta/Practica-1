@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Kilogramos a Gramos</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.13.0/dist/tf.min.js"></script>
+    <script type="text/javascript">
+        var model = null;
+
+        (async () => {
+            console.log("Cargando modelo...");
+            model = await tf.loadLayersModel("model.json");
+            console.log("Modelo cargado");
+        })();
+
+        function cambiarKilogramos() {
+            var kilogramos = document.getElementById("kilogramos").value;
+            document.getElementById("lbl-kilogramos").innerHTML = kilogramos;
+
+            if (model != null) {
+                var tensor = tf.tensor1d([parseInt(kilogramos)]);
+                var prediccion = model.predict(tensor).dataSync();
+                prediccion = Math.round(prediccion);
+
+                document.getElementById("resultado").innerHTML =
+                    kilogramos + " Kilogramos son " + prediccion + " Gramos";
+            }
+        }
+    </script>
+</head>
+<body>
+    <form>
+        <div class="mb-3">
+            <label for="kilogramos" class="form-label">Kilogramos: <span id="lbl-kilogramos">0</span></label>
+            <input type="range" class="form-label" min="0" max="100" id="kilogramos" oninput="cambiarKilogramos();">
+        </div>
+
+        <label for="kilogramos" class="form-label">Resultado</label>
+        <div id="resultado">
+            0 Kilogramos son 0 Gramos
+        </div>
+    </form>
+</body>
+</html>
